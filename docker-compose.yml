@@ -1,0 +1,26 @@
+services:
+  www:
+      build: .
+      ports:
+          - '80:80'
+          - '433:433'
+          - '6001:6001'
+      volumes:
+        - ./:/var/www/html
+      networks:
+        - telemetry-network
+      container_name: laravel-telemetry
+
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    container_name: jaeger-tracing
+    networks:
+      - telemetry-network
+    environment:
+      - COLLECTOR_OTLP_ENABLED=true
+    ports:
+      - "16686:16686" # UI
+      - "4318:4318" # Porta de entrada de dados
+networks:
+  telemetry-network:
+    driver: bridge
